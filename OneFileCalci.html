@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemorphism calci</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        user-select: none;
+        background: #ecf0f3;
+    }
+
+    .container {
+        margin-left: 1.8em;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 13px 13px 20px #cbced1,
+            -13px -13px 20px #ffffff;
+    }
+
+    .content {
+        width: 100%;
+        margin-top: 1.7em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .row button {
+        width: 60px;
+        height: 30px;
+        font-size: 16px;
+        border: none;
+        outline: none;
+        margin: 5px;
+        border-radius: 4px;
+        transition: .1s;
+        box-shadow: 5px 5px 8px #00000020,
+            -5px -5px 8px #ffff;
+    }
+    .button:hover {
+            background: #0056b3;
+        }
+
+        .button.operation {
+            background: #17e3e0;
+        }
+
+        .button.operation:hover {
+            background: #e68900;
+        }
+
+        .button.equal {
+            grid-column: span 2;
+            background: #6bbe6d;
+        }
+
+        .button.equal:hover {
+            background: #3e8e41;
+        }
+
+        .button.clear {
+            background: #ed5247;
+        }
+
+        .button.clear:hover {
+            background: #d32f2f;
+        }
+
+        .button.clear:hover {
+            background: #d32f2f;
+        }
+
+        .button.shift {
+            background: #9c27b0;
+        }
+
+        .button.shift:hover {
+            background: #7b1fa2;
+        }
+
+    .display #display {
+        margin-bottom: .5em;
+        width: auto;
+        height: 90px;
+        font-size: 35px;
+        outline: none;
+        border: none;
+        text-align: right;
+        padding-right: .5em;
+        background: #ecf0f3;
+        border-radius: 6px;
+        box-shadow: inset 8px 8px 8px #cbced1,
+            inset -8px -8px 8px #ffffff;
+    }
+
+    .display .operation {
+            font-size: .5 em;
+            color: #666;
+    }
+
+    .display .result {
+            font-size: 1.2em;
+            font-weight: bold;
+    }
+
+    .display .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: black;
+            position: absolute;
+            animation: blink 0.6s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+    .sup {
+            vertical-align: super;
+            font-size: 0.7em;
+        }
+
+</style>
+
+<body>
+
+    <div class="container">
+        <div class="display">
+            <div class="display" id="display">
+                <div class="operation" id="operation"></div>
+                <div class="result" id="result">0</div>
+        </div>
+
+        <div class="btns">
+
+            <div class="row">
+                <button class="button shift" onclick="toggleShift()">Shift</button>
+                <button class="button shift" onclick="togglalpha()">Alpha</button>
+                <button class="button" onclick="moveCursor('up')">↑</button>
+                <button class="button" onclick="moveCursor('down')">↓</button>
+                <button class="button" onclick="moveCursor('left')">←</button>
+                <button class="button" onclick="moveCursor('right')">→</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="function2" onclick="appendFunction('exp')">exp</button>
+                <button class="button operation" onclick="appendSymbol('!', '!')">n!</button>
+                <button class="button operation" onclick="appendValue('(')">(</button>
+                <button class="button operation" onclick="appendValue(')')">)</button>
+                <button class="button clear" onclick="deleteCharacter()">Del</button>
+                <button class="button clear" onclick="cleardisplay()">AC</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="function1" onclick="appendFunction('log')">log</button>
+                <button class="button operation" id="function2" onclick="appendFunction('exp')">exp</button>
+                <button class="button" onclick="appendValue('7')">7</button>
+                <button class="button" onclick="appendValue('8')">8</button>
+                <button class="button" onclick="appendValue('9')">9</button>
+                <button class="button operation" onclick="appendValue('×')">×</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="function3" onclick="appendFunction('Math.sqrt', '√')">√</button>
+                <button class="button operation" onclick="appendExponent()">xⁿ</button>
+                <button class="button" onclick="appendValue('7')">7</button>
+                <button class="button" onclick="appendValue('8')">8</button>
+                <button class="button" onclick="appendValue('9')">9</button>
+                <button class="button operation" onclick="appendValue('÷')">÷</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="trig1" onclick="appendFunction('Math.sin', 'sin')">sin</button>
+                <button class="button" onclick="appendValue('4')">4</button>
+                <button class="button" onclick="appendValue('5')">5</button>
+                <button class="button" onclick="appendValue('6')">6</button>
+                <button class="button operation" onclick="appendValue('+')">+</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="trig2" onclick="appendFunction('Math.cos', 'cos')">cos</button>
+                <button class="button" onclick="appendValue('1')">1</button>
+                <button class="button" onclick="appendValue('2')">2</button>
+                <button class="button" onclick="appendValue('3')">3</button>
+                <button class="button operation" onclick="appendValue('-')">-</button>
+            </div>
+
+            <div class="row">
+                <button class="button operation" id="trig3" onclick="appendFunction('Math.tan', 'tan')">tan</button>
+                <button class="button" onclick="appendValue('0')">0</button>
+                <button class="button operation" onclick="appendValue('×10ⁿ')">×10ⁿ</button>
+                <button class="button operation" onclick="appendValue('.')">,</button>
+                <button class="button equal" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+<script>
+    const operationdisplay = document.getElementById('operation');
+    const resultdisplay = document.getElementById('result');
+    const cursor = document.getElementById('cursor');
+    let shiftActive = false;
+    let cursorPosition = 0;
+
+    function updateCursor() {
+        const content = operationdisplay.textContent;
+        const beforeCursor = content.slice(0, cursorPosition);
+        const afterCursor = content.slice(cursorPosition);
+        operationdisplay.innerHTML = `${beforeCursor}<span class="cursor" id="cursor"></span>${afterCursor}`;
+    }
+
+    function appendValue(value) {
+        const content = operationdisplay.textContent;
+        operationdisplay.innerHTML = content.slice(0, cursorPosition) + value + content.slice(cursorPosition);
+        cursorPosition = content.length + value.length;
+        updateCursor();
+    }
+
+    function appendSymbol(symbol, displaySymbol) {
+        appendValue(displaySymbol);
+    }
+
+    function appendFunction(funcName, displayName = funcName) {
+    // Jika shift aktif, sesuaikan nama fungsi
+    if (shiftActive) {
+        switch (funcName) {
+            case 'log':
+                funcName = 'Math.log'; // Mengganti log menjadi log10
+                displayName = 'ln'; // Nama yang ditampilkan tetap log
+                break;
+            case 'exp':
+                funcName = 'Math.pow'; // Mengganti exp menjadi 10^n
+                displayName = '10ⁿ';
+                break;
+            case '√':
+                funcName = 'Math.cbrt'; // Mengganti akar kuadrat menjadi akar kubik
+                displayName = '³√';
+                break;
+            case 'Math.sin':
+                funcName = 'Math.asin'; // Mengganti sin menjadi sin⁻¹
+                displayName = 'sin⁻¹';
+                break;
+            case 'Math.cos':
+                funcName = 'Math.acos'; // Mengganti cos menjadi cos⁻¹
+                displayName = 'cos⁻¹';
+                break;
+            case 'Math.tan':
+                funcName = 'Math.atan'; // Mengganti tan menjadi tan⁻¹
+                displayName = 'tan⁻¹';
+                break;
+        }
+    }
+        appendValue(displayName + '(');
+    }
+
+    function appendExponent() {
+        appendValue('^');
+    }
+
+    function factorial(n) {
+        if (n === 0 || n === 1) return 1;
+        return n * factorial(n - 1);
+    }
+
+    function deleteCharacter() {
+        if (cursorPosition > 0) {
+            const content = operationdisplay.textContent;
+            operationdisplay.innerHTML = content.slice(0, cursorPosition - 1) + content.slice(cursorPosition);
+            cursorPosition--;
+            updateCursor();
+        }
+    }
+
+    function toggleShift() {
+        shiftActive = !shiftActive;
+        document.getElementById('function1').textContent = shiftActive ? 'ln' : 'log';
+        document.getElementById('function2').textContent = shiftActive ? '10ⁿ' : 'exp';
+        document.getElementById('function3').textContent = shiftActive ? '³√' : '√';
+        document.getElementById('trig1').textContent = shiftActive ? 'sin⁻¹' : 'sin';
+        document.getElementById('trig2').textContent = shiftActive ? 'cos⁻¹' : 'cos';
+        document.getElementById('trig3').textContent = shiftActive ? 'tan⁻¹' : 'tan';
+    }
+
+    function calculate() {
+        
+        try {
+            let expression = operationdisplay.textContent
+                .replace(/√/g, 'Math.sqrt')
+                .replace(/log/g, 'Math.log10')
+                .replace(/ln/g, 'Math.log')
+                .replace(/exp/g, 'Math.exp')
+                .replace(/sin/g, 'Math.sin')
+                .replace(/cos/g, 'Math.cos')
+                .replace(/tan/g, 'Math.tan')
+                .replace(/sin⁻¹/g, 'Math.asin')
+                .replace(/cos⁻¹/g, 'Math.acos')
+                .replace(/tan⁻¹/g, 'Math.atan')
+                .replace(/\^/g, '**')
+                .replace(/(\d+)!/g, (match, num) => factorial(parseInt(num)));
+
+            resultdisplay.textContent = eval(expression);
+        } catch {
+            resultdisplay.textContent = "Error";
+        }
+    }
+
+    function cleardisplay() {
+        operationdisplay.innerHTML = "";
+        resultdisplay.textContent = "0";
+        cursorPosition = 0;
+        updateCursor();
+    }
+
+    function moveCursor(direction) {
+        const content = operationdisplay.textContent;
+
+        if (direction === 'left' && cursorPosition > 0) {
+            cursorPosition--;
+        } else if (direction === 'right' && cursorPosition < content.length) {
+            cursorPosition++;
+        } else if (direction === 'up' || direction === 'down') {
+            // Placeholder untuk navigasi vertikal jika diperlukan.
+        }
+
+        updateCursor();
+    }
+
+    updateCursor();
+</script>
+
+</body>
+</html>
